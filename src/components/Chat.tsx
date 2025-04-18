@@ -18,6 +18,16 @@ function App() {
       const id = parseInt(savedId, 10);
       if (!isNaN(id)) {
         setConversationId(id);
+
+        // Load previous messages
+        api
+          .get(`chatbot/conversation/${id}`)
+          .then((res) => {
+            setMessages(res.data);
+          })
+          .catch((err) => {
+            console.error("Failed to load messages", err);
+          });
       }
     }
   }, []);
