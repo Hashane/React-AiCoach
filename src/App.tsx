@@ -9,10 +9,21 @@ import Login from "./components/Login";
 import PrivateRoute from "./routes/PrivateRoute";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./components/Sidebar";
+import { useState, useEffect } from "react";
 
 function Layout() {
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
+
+  const [conversationId, setConversationId] = useState<number | null>(null);
+
+  // Load conversationId from localStorage or backend if necessary
+  useEffect(() => {
+    const savedId = localStorage.getItem("conversationId");
+    if (savedId) {
+      setConversationId(parseInt(savedId, 10));
+    }
+  }, []);
 
   if (isLoginPage) {
     return (
@@ -60,7 +71,14 @@ function Layout() {
 
       {/* Sidebar + Chat in flex row */}
       <div className="d-flex flex-grow-1">
-        <Sidebar />
+        {/* Pass conversationId and setConversationId to Sidebar */}
+        <Sidebar
+          onSelect={(id) => {
+            setConversationId(id);
+            localStorage.setItem("conversationId", String(id));
+          }}
+          activeId={conversationId}
+        />
 
         <div className="flex-grow-1 pt-3 overflow-auto">
           <Routes>
@@ -68,7 +86,10 @@ function Layout() {
               path="/"
               element={
                 <PrivateRoute>
-                  <Chat />
+                  <Chat
+                    conversationId={conversationId}
+                    setConversationId={setConversationId}
+                  />
                 </PrivateRoute>
               }
             />

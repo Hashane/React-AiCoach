@@ -1,36 +1,33 @@
+// Chat.tsx
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ChatWindow from "./ChatWindow";
 import api from "../services/axios";
-import axios, { AxiosError } from "axios";
 
-function App() {
+function Chat({
+  conversationId,
+  setConversationId,
+}: {
+  conversationId: number | null;
+  setConversationId: (id: number) => void;
+}) {
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hello, how can I assist you?" },
   ]);
   const [userInput, setUserInput] = useState("");
-  const [conversationId, setConversationId] = useState<number | null>(null);
 
-  // Load conversation ID on mount
   useEffect(() => {
-    const savedId = localStorage.getItem("conversationId");
-    if (savedId) {
-      const id = parseInt(savedId, 10);
-      if (!isNaN(id)) {
-        setConversationId(id);
-
-        // Load previous messages
-        api
-          .get(`chatbot/conversation/${id}`)
-          .then((res) => {
-            setMessages(res.data);
-          })
-          .catch((err) => {
-            console.error("Failed to load messages", err);
-          });
-      }
+    if (conversationId) {
+      api
+        .get(`chatbot/conversation/${conversationId}`)
+        .then((res) => {
+          setMessages(res.data);
+        })
+        .catch((err) => {
+          console.error("Failed to load messages", err);
+        });
     }
-  }, []);
+  }, [conversationId]);
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
@@ -54,11 +51,7 @@ function App() {
         localStorage.setItem("conversationId", String(newId));
       }
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        console.error("Backend error:", err.response?.data || err.message);
-      } else {
-        console.error("Unexpected error:", err);
-      }
+      console.error("Error sending message", err);
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "Oops! Server error." },
@@ -86,4 +79,4 @@ function App() {
   );
 }
 
-export default App;
+export default Chat;
