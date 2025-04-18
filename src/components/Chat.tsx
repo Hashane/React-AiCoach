@@ -10,12 +10,14 @@ function Chat({
   messages,
   setMessages,
   userName,
+  setRefreshConversations,
 }: {
   conversationId: number | null;
   setConversationId: (id: number) => void;
   setMessages: React.Dispatch<React.SetStateAction<any[]>>;
   messages: any[];
   userName: string;
+  setRefreshConversations: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [userInput, setUserInput] = useState("");
 
@@ -59,6 +61,7 @@ function Chat({
         const newId = response.data.conversation_id;
         setConversationId(newId);
         localStorage.setItem("conversationId", String(newId));
+        setRefreshConversations((prev) => !prev);
       }
     } catch (err) {
       console.error("Error sending message", err);

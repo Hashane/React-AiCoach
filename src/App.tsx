@@ -22,6 +22,7 @@ function Layout() {
   ]);
 
   const [userName, setUserName] = useState<string>("");
+  const [refreshConversations, setRefreshConversations] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -104,6 +105,7 @@ function Layout() {
           }}
           activeId={conversationId}
           startNewChat={startNewChat} // Pass startNewChat to Sidebar
+          refreshConversations={refreshConversations}
         />
 
         <div className="flex-grow-1 pt-3 overflow-auto">
@@ -118,6 +120,7 @@ function Layout() {
                     setMessages={setMessages}
                     messages={messages}
                     userName={userName}
+                    setRefreshConversations={setRefreshConversations}
                   />
                 </PrivateRoute>
               }

@@ -8,10 +8,12 @@ function Sidebar({
   onSelect,
   activeId,
   startNewChat,
+  refreshConversations,
 }: {
   onSelect: (id: number) => void;
   activeId: number | null;
   startNewChat: () => void; // Function passed from Layout
+  refreshConversations: boolean;
 }) {
   const [conversations, setConversations] = useState<
     { id: number; title: string }[]
@@ -28,7 +30,7 @@ function Sidebar({
     };
 
     fetchConversations();
-  }, []);
+  }, [refreshConversations]);
 
   return (
     <div
