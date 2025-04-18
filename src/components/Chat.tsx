@@ -1,13 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import axios from "axios";
 import ChatWindow from "./ChatWindow";
+import api from "../services/axios";
+import axios, { AxiosError } from "axios";
 
 function App() {
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hello, how can I assist you nigga?" },
+    { sender: "bot", text: "Hello, how can I assist you?" },
   ]);
   const [userInput, setUserInput] = useState("");
+  const [conversationId, setConversationId] = useState<number | null>(null);
+
+  // Load conversation ID on mount
+  useEffect(() => {
+    const savedId = localStorage.getItem("conversationId");
+    if (savedId) {
+      const id = parseInt(savedId, 10);
+      if (!isNaN(id)) {
+        setConversationId(id);
+      }
+    }
+  }, []);
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
@@ -17,23 +30,25 @@ function App() {
     setUserInput("");
 
     try {
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqaGFzaGFuZSIsImV4cCI6MTc0NDkzNjUzOCwidHlwZSI6ImFjY2VzcyJ9.qO3Mw7GCL4ilO9Nc29TKLaQUzk6IaMgwcqgiZpsrTy8";
-      const response = await axios.post(
-        "http://127.0.0.1:8000/chatbot/chat",
-        { text: userInput },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await api.post("/chatbot/chat", {
+        text: userInput,
+        conversation_id: conversationId ?? undefined,
+      });
 
       const botMessage = { sender: "bot", text: response.data.reply };
       setMessages((prev) => [...prev, botMessage]);
+
+      if (!conversationId && response.data.conversation_id) {
+        const newId = response.data.conversation_id;
+        setConversationId(newId);
+        localStorage.setItem("conversationId", String(newId));
+      }
     } catch (err) {
-      console.error("Backend error:", err);
+      if (axios.isAxiosError(err)) {
+        console.error("Backend error:", err.response?.data || err.message);
+      } else {
+        console.error("Unexpected error:", err);
+      }
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "Oops! Server error." },

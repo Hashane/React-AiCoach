@@ -1,9 +1,30 @@
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import Chat from "./components/Chat";
+import Login from "./components/Login";
+import PrivateRoute from "./routes/PrivateRoute";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Sidebar from "./components/Sidebar";
 
-function App() {
+function Layout() {
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+
+  if (isLoginPage) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    );
+  }
+
   return (
     <div className="d-flex flex-column min-vh-100 bg-dark text-white">
+      {/* Navbar */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
         <div className="container">
           <a className="navbar-brand fw-bold" href="#">
@@ -36,10 +57,33 @@ function App() {
           </div>
         </div>
       </nav>
-      <div className="flex-grow-1 pt-3 overflow-auto">
-        <Chat />
+
+      {/* Sidebar + Chat in flex row */}
+      <div className="d-flex flex-grow-1">
+        <Sidebar />
+
+        <div className="flex-grow-1 pt-3 overflow-auto">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <Chat />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </div>
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Layout />
+    </Router>
   );
 }
 
