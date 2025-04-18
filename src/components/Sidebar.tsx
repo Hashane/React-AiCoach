@@ -35,22 +35,36 @@ function Sidebar({
   return (
     <div
       className="bg-secondary text-white p-3 border-end border-dark"
-      style={{ width: "250px", minHeight: "100%" }}
+      style={{
+        width: "250px",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
-      <h5>Conversations</h5>
-      {/* Add the NewChat button here */}
-      <NewChat startNewChat={startNewChat} />
+      <h5 className="mb-3">Conversations</h5>
 
-      <ul className="list-unstyled">
-        {conversations.map((conv) => (
-          <ConversationItem
-            key={conv.id}
-            title={conv.title}
-            active={conv.id === activeId}
-            onClick={() => onSelect(conv.id)}
-          />
-        ))}
-      </ul>
+      <div className="mb-3" style={{ width: "100%" }}>
+        {/* New Chat Button - Make it full width */}
+        <NewChat startNewChat={startNewChat} style={{ width: "100%" }} />
+      </div>
+
+      {/* Conversations List with Scroll */}
+      <div
+        className="overflow-auto flex-grow-1"
+        style={{ maxHeight: "calc(100vh - 150px)" }}
+      >
+        <ul className="list-unstyled mb-0">
+          {conversations.map((conv) => (
+            <ConversationItem
+              key={conv.id}
+              title={conv.title}
+              active={conv.id === activeId}
+              onClick={() => onSelect(conv.id)}
+            />
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
