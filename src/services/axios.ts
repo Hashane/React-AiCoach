@@ -31,7 +31,6 @@ api.interceptors.response.use(
       try {
         // Attempt to refresh the token
         const res = await api.post("/auth/refresh"); // Cookie auto sent
-        console.log(res.data.token);
         const newToken = res.data.token;
 
         // Save the new token and retry the original request
