@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Chat from "./components/Chat";
 import Login from "./components/Login";
 import PrivateRoute from "./routes/PrivateRoute";
@@ -11,60 +6,47 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./components/Sidebar";
 import { useState, useEffect } from "react";
 import api from "./services/axios";
+import { useAuth } from "./context/AuthContext";
 
 function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isLoginPage = location.pathname === "/login";
+  const { isAuthenticated, userName, logout, checkAuth } = useAuth();
 
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hello, how can I assist you?" },
   ]);
-
-  const [userName, setUserName] = useState<string>("");
   const [refreshConversations, setRefreshConversations] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/auth/users/me");
-        setUserName(res.data.username);
-      } catch (err) {
-        console.error("Failed to fetch user info", err);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  // Load conversationId from localStorage or backend if necessary
-  useEffect(() => {
+    checkAuth();
     const savedId = localStorage.getItem("conversationId");
     if (savedId) {
       setConversationId(parseInt(savedId, 10));
     }
-  }, []);
+  }, [checkAuth]);
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   if (isLoginPage) {
-    return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    );
+    return <Login />;
   }
 
   const startNewChat = () => {
-    setMessages([]); // Clear current messages
-    setConversationId(null); // Reset the conversation ID
-    localStorage.removeItem("conversationId"); // Clear from localStorage
+    setMessages([]);
+    setConversationId(null);
+    localStorage.removeItem("conversationId");
   };
 
   return (
     <div className="d-flex flex-column min-vh-100 bg-dark text-white">
-      {/* Navbar */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
         <div className="container">
-          <a className="navbar-brand fw-bold" href="#">
+          <a className="navbar-brand fw-bold" href="/">
             🧠 AI Coach
           </a>
           <button
@@ -81,32 +63,48 @@ function Layout() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <a className="nav-link active" href="#">
+                <a className="nav-link active" href="/">
                   Home
                 </a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">
-                  Login
-                </a>
-              </li>
+              {isAuthenticated ? (
+                <>
+                  <li className="nav-item">
+                    <span className="nav-link">Welcome, {userName}</span>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link btn btn-link"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item">
+                  <a className="nav-link" href="/login">
+                    Login
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
       </nav>
 
-      {/* Sidebar + Chat in flex row */}
       <div className="d-flex flex-grow-1">
-        {/* Pass conversationId and setConversationId to Sidebar */}
-        <Sidebar
-          onSelect={(id) => {
-            setConversationId(id);
-            localStorage.setItem("conversationId", String(id));
-          }}
-          activeId={conversationId}
-          startNewChat={startNewChat} // Pass startNewChat to Sidebar
-          refreshConversations={refreshConversations}
-        />
+        {isAuthenticated && (
+          <Sidebar
+            onSelect={(id) => {
+              setConversationId(id);
+              localStorage.setItem("conversationId", String(id));
+            }}
+            activeId={conversationId}
+            startNewChat={startNewChat}
+            refreshConversations={refreshConversations}
+          />
+        )}
 
         <div className="flex-grow-1 pt-3 overflow-auto">
           <Routes>
@@ -134,9 +132,10 @@ function Layout() {
 
 function App() {
   return (
-    <Router>
-      <Layout />
-    </Router>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/*" element={<Layout />} />
+    </Routes>
   );
 }
 
