@@ -1,8 +1,9 @@
 import Chat from "./components/Chat";
 import "bootstrap/dist/css/bootstrap.min.css";
+
 function App() {
   return (
-    <>
+    <div className="d-flex flex-column min-vh-100 bg-dark text-white">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
         <div className="container">
           <a className="navbar-brand fw-bold" href="#">
@@ -35,10 +36,10 @@ function App() {
           </div>
         </div>
       </nav>
-      <div className="App">
+      <div className="flex-grow-1 pt-3 overflow-auto">
         <Chat />
       </div>
-    </>
+    </div>
   );
 }
 
