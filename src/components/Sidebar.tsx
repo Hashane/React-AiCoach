@@ -1,17 +1,17 @@
+// Sidebar.tsx
 import { useEffect, useState } from "react";
 import api from "../services/axios";
 import ConversationItem from "./ConversationItem";
-
-type Conversation = {
-  id: number;
-};
+import { NewChat } from "./NewChat";
 
 function Sidebar({
   onSelect,
   activeId,
+  startNewChat,
 }: {
   onSelect: (id: number) => void;
   activeId: number | null;
+  startNewChat: () => void; // Function passed from Layout
 }) {
   const [conversations, setConversations] = useState<
     { id: number; title: string }[]
@@ -36,6 +36,9 @@ function Sidebar({
       style={{ width: "250px", minHeight: "100%" }}
     >
       <h5>Conversations</h5>
+      {/* Add the NewChat button here */}
+      <NewChat startNewChat={startNewChat} />
+
       <ul className="list-unstyled">
         {conversations.map((conv) => (
           <ConversationItem

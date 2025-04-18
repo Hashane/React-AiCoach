@@ -1,25 +1,7 @@
-import React from "react";
-
-export const NewChat = ({
-  setMessages,
-}: {
-  setMessages: React.Dispatch<React.SetStateAction<any[]>>;
-  setConversationId: React.Dispatch<React.SetStateAction<number | null>>;
-}) => {
-  const startNewChat = () => {
-    // Clear messages and reset the conversation ID
-    setMessages([]); // Clear messages
-
-    localStorage.removeItem("conversationId"); // Clear stored conversation ID
-  };
-
+export const NewChat = ({ startNewChat }: { startNewChat: () => void }) => {
   return (
     <>
-      <button
-        type="button"
-        className="btn btn-warning"
-        onClick={startNewChat} // Fix: Changed onChange to onClick
-      >
+      <button type="button" className="btn btn-warning" onClick={startNewChat}>
         Start New Chat
       </button>
     </>

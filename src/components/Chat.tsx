@@ -7,13 +7,16 @@ import api from "../services/axios";
 function Chat({
   conversationId,
   setConversationId,
+  messages,
+  setMessages,
+  userName,
 }: {
   conversationId: number | null;
   setConversationId: (id: number) => void;
+  setMessages: React.Dispatch<React.SetStateAction<any[]>>;
+  messages: any[];
+  userName: string;
 }) {
-  const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hello, how can I assist you?" },
-  ]);
   const [userInput, setUserInput] = useState("");
 
   useEffect(() => {
@@ -26,8 +29,15 @@ function Chat({
         .catch((err) => {
           console.error("Failed to load messages", err);
         });
+    } else {
+      setMessages([
+        {
+          sender: "bot",
+          text: `Hello, ${userName}! How can I assist you today?`,
+        },
+      ]);
     }
-  }, [conversationId]);
+  }, [conversationId, setMessages, userName]);
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
