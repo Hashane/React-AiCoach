@@ -45,11 +45,8 @@ function Sidebar({
       <h5 className="mb-3">Conversations</h5>
 
       <div className="mb-3" style={{ width: "100%" }}>
-        {/* New Chat Button - Make it full width */}
         <NewChat startNewChat={startNewChat} style={{ width: "100%" }} />
       </div>
-
-      {/* Conversations List with Scroll */}
       <div
         className="overflow-auto flex-grow-1"
         style={{ maxHeight: "calc(100vh - 150px)" }}
