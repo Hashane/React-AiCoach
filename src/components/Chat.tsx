@@ -75,13 +75,13 @@ function Chat({
   return (
     <div
       className="d-flex justify-content-center align-items-center h-100 bg-dark text-white"
-      style={{ minHeight: "100vh" }} // Ensure the container takes full viewport height
+      style={{ minHeight: "100vh" }}
     >
       <div
         className="card bg-dark text-white shadow-lg w-100"
         style={{
-          maxWidth: "1000px", // Increase the max-width of the card
-          height: "90vh", // Increase the height of the card to take more space
+          maxWidth: "1000px",
+          height: "90vh",
         }}
       >
         <div className="card-header bg-secondary text-white text-center fs-5 fw-semibold">
