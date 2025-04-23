@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ChatWindow from "./ChatWindow";
 import api from "../services/axios";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function Chat({
   conversationId,
@@ -20,6 +21,7 @@ function Chat({
   setRefreshConversations: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [userInput, setUserInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (conversationId) {
@@ -49,6 +51,8 @@ function Chat({
     setUserInput("");
 
     try {
+      setLoading(true);
+
       const response = await api.post("/chatbot/chat", {
         text: userInput,
         conversation_id: conversationId ?? undefined,
@@ -69,6 +73,8 @@ function Chat({
         ...prev,
         { sender: "bot", text: "Oops! Server error." },
       ]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,6 +93,19 @@ function Chat({
         <div className="card-header bg-secondary text-white text-center fs-5 fw-semibold">
           💬 AI Coach
         </div>
+        {loading ? (
+          <div className="">
+            <div className="progress">
+              <div
+                className="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                role="progressbar"
+                style={{ width: "100%" }}
+              ></div>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <ChatWindow
           messages={messages}
           userInput={userInput}

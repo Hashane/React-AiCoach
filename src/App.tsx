@@ -5,7 +5,6 @@ import PrivateRoute from "./routes/PrivateRoute";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./components/Sidebar";
 import { useState, useEffect } from "react";
-import api from "./services/axios";
 import { useAuth } from "./context/AuthContext";
 
 function Layout() {

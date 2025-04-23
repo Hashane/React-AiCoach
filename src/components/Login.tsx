@@ -13,8 +13,8 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/auth/token", // Ensure your API endpoint is correct
-        qs.stringify({ username: username, password: password }), // URL-encode the data
+        "http://localhost:8000/auth/token",
+        qs.stringify({ username: username, password: password }),
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded", // Set Content-Type to URL-encoded for login
