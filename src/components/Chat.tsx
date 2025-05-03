@@ -1,13 +1,47 @@
-import { useState } from "react";
+// Chat.tsx
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import axios from "axios";
 import ChatWindow from "./ChatWindow";
+import api from "../services/axios";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-function App() {
-  const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hello, how can I assist you nigga?" },
-  ]);
+function Chat({
+  conversationId,
+  setConversationId,
+  messages,
+  setMessages,
+  userName,
+  setRefreshConversations,
+}: {
+  conversationId: number | null;
+  setConversationId: (id: number) => void;
+  setMessages: React.Dispatch<React.SetStateAction<any[]>>;
+  messages: any[];
+  userName: string;
+  setRefreshConversations: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [userInput, setUserInput] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (conversationId) {
+      api
+        .get(`chatbot/conversation/${conversationId}`)
+        .then((res) => {
+          setMessages(res.data);
+        })
+        .catch((err) => {
+          console.error("Failed to load messages", err);
+        });
+    } else {
+      setMessages([
+        {
+          sender: "bot",
+          text: `Hello, ${userName}! How can I assist you today?`,
+        },
+      ]);
+    }
+  }, [conversationId, setMessages, userName]);
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
@@ -17,39 +51,61 @@ function App() {
     setUserInput("");
 
     try {
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqaGFzaGFuZSIsImV4cCI6MTc0NDkzNjUzOCwidHlwZSI6ImFjY2VzcyJ9.qO3Mw7GCL4ilO9Nc29TKLaQUzk6IaMgwcqgiZpsrTy8";
-      const response = await axios.post(
-        "http://127.0.0.1:8000/chatbot/chat",
-        { text: userInput },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      setLoading(true);
+
+      const response = await api.post("/chatbot/chat", {
+        text: userInput,
+        conversation_id: conversationId ?? undefined,
+      });
 
       const botMessage = { sender: "bot", text: response.data.reply };
       setMessages((prev) => [...prev, botMessage]);
+
+      if (!conversationId && response.data.conversation_id) {
+        const newId = response.data.conversation_id;
+        setConversationId(newId);
+        localStorage.setItem("conversationId", String(newId));
+        setRefreshConversations((prev) => !prev);
+      }
     } catch (err) {
-      console.error("Backend error:", err);
+      console.error("Error sending message", err);
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "Oops! Server error." },
       ]);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center h-100 bg-dark text-white">
+    <div
+      className="d-flex justify-content-center align-items-center h-100 bg-dark text-white"
+      style={{ minHeight: "100vh" }}
+    >
       <div
         className="card bg-dark text-white shadow-lg w-100"
-        style={{ maxWidth: "600px", height: "80vh" }}
+        style={{
+          maxWidth: "1000px",
+          height: "90vh",
+        }}
       >
         <div className="card-header bg-secondary text-white text-center fs-5 fw-semibold">
           💬 AI Coach
         </div>
+        {loading ? (
+          <div className="">
+            <div className="progress">
+              <div
+                className="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                role="progressbar"
+                style={{ width: "100%" }}
+              ></div>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <ChatWindow
           messages={messages}
           userInput={userInput}
@@ -61,4 +117,4 @@ function App() {
   );
 }
 
-export default App;
+export default Chat;
