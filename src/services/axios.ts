@@ -1,8 +1,10 @@
 import axios from "axios";
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 // Base API instance
 const api = axios.create({
-  baseURL: "http://localhost:8000", // backend URL
+  baseURL: apiBase, // backend URL
   withCredentials: true, // needed for httpOnly cookies
   headers: {
     "Content-Type": "application/json", // Ensuring JSON is sent
@@ -20,33 +22,43 @@ api.interceptors.request.use((config) => {
 
 // Response interceptor: Handle token refresh
 api.interceptors.response.use(
-  (response) => response, // If request is successful, return response
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // If the response status is 401 (Unauthorized) and the retry flag is not set
+    // Avoid retrying if the original request was to /auth/refresh
+    if (originalRequest.url.includes("/auth/refresh")) {
+      return Promise.reject(error);
+    }
+
+    // If 401 and not already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        // Attempt to refresh the token
-        const res = await api.post("/auth/refresh"); // Cookie auto sent
-        const newToken = res.data.token;
+        // Refresh token using cookie
+        const res = await api.post("/auth/refresh", null, {
+          withCredentials: true,
+        });
 
-        // Save the new token and retry the original request
+        const newToken = res.data.token;
         localStorage.setItem("access_token", newToken);
+
+        // Apply token to all future requests
+        api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
 
-        return api(originalRequest); // Retry the failed request with new token
+        // Retry the original request
+        return api(originalRequest);
       } catch (refreshError) {
         console.error("Refresh failed", refreshError);
         localStorage.removeItem("access_token");
-        window.location.href = "/login"; // Redirect to login on refresh failure
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
 
-    return Promise.reject(error); // Reject the promise if there's an error
+    return Promise.reject(error);
   }
 );
 

@@ -13,7 +13,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/auth/token",
+        "/auth/token",
         qs.stringify({ username: username, password: password }),
         {
           headers: {
