@@ -67,3 +67,31 @@ REACT_APP_API_BASE_URL=http://localhost:8000
 ```bash
 npm start
 ```
+
+## 🔐 Authentication
+
+This client uses JWT authentication with refresh tokens stored in cookies. Protected routes are wrapped with <PrivateRoute /> and user session is handled via a global AuthContext.
+
+## 📁 Project Structure
+
+```bash
+src/
+├── components/
+│   ├── Chat.tsx
+│   ├── ChatWindow.tsx
+│   ├── ConversationItem.tsx
+│   ├── Login.tsx
+│   ├── MessageBubble.tsx
+│   ├── NewChat.tsx
+│   ├── Sidebar.tsx
+│   ├── SoeechInput.tsx
+│   └── Login.tsx
+├── context/
+│   └── AuthContext.tsx
+├── routes/
+│   └── PrivateRoute.tsx
+├── services/
+│   └── axios.ts
+├── app.css
+└── App.tsx
+```
