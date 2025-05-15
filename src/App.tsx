@@ -6,6 +6,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./components/Sidebar";
 import { useState, useEffect } from "react";
 import { useAuth } from "./context/AuthContext";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "./app.css";
 
 function Layout() {
   const location = useLocation();
@@ -44,10 +46,15 @@ function Layout() {
   return (
     <div className="d-flex flex-column min-vh-100 bg-dark text-white">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
-        <div className="container">
-          <a className="navbar-brand fw-bold" href="/">
-            🧠 AI Coach
+        <div className="container d-flex align-items-center gap-2">
+          <i
+            className="fas fa-robot"
+            style={{ color: "#fbbf24", fontSize: "1.5rem" }}
+          ></i>
+          <a className="navbar-brand fw-bold text-warning mb-0" href="/">
+            AI Coach
           </a>
+
           <button
             className="navbar-toggler"
             type="button"

@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import MessageBubble from "./MessageBubble";
+import SpeechInput from "./SpeechInput";
 
 type Props = {
   messages: { sender: string; text: string }[];
@@ -10,10 +11,17 @@ type Props = {
 
 function ChatWindow({ messages, userInput, onChange, onSend }: Props) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [speechText, setSpeechText] = useState("");
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (speechText) {
+      onChange(speechText);
+    }
+  }, [speechText]);
 
   return (
     <>
@@ -39,6 +47,10 @@ function ChatWindow({ messages, userInput, onChange, onSend }: Props) {
         <button onClick={onSend} className="btn btn-outline-light">
           Send
         </button>
+        <SpeechInput
+          onTranscriptChange={(text) => setSpeechText(text)}
+          autoStart={false}
+        />
       </div>
     </>
   );
