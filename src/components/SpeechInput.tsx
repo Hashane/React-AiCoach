@@ -5,38 +5,22 @@ import SpeechRecognition, {
 
 type SpeechInputProps = {
   onTranscriptChange?: (text: string) => void;
-  autoStart?: boolean;
-  showControls?: boolean;
 };
 
-const SpeechInput: React.FC<SpeechInputProps> = ({
-  onTranscriptChange,
-  autoStart = false,
-  showControls = true,
-}) => {
+const SpeechInput: React.FC<SpeechInputProps> = ({ onTranscriptChange }) => {
   const [isListening, setIsListening] = useState(false);
+  const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
+    useSpeechRecognition();
 
   const toggleListening = () => {
     if (isListening) {
       SpeechRecognition.stopListening();
+      resetTranscript();
     } else {
       SpeechRecognition.startListening({ continuous: true });
     }
-    setIsListening(!isListening);
+    setIsListening((prev) => !prev);
   };
-
-  const {
-    transcript,
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition,
-  } = useSpeechRecognition();
-
-  useEffect(() => {
-    if (autoStart) {
-      SpeechRecognition.startListening({ continuous: true });
-    }
-  }, [autoStart]);
 
   useEffect(() => {
     if (onTranscriptChange) {
