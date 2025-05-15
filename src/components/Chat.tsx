@@ -90,9 +90,17 @@ function Chat({
           height: "90vh",
         }}
       >
-        <div className="card-header bg-secondary text-white text-center fs-5 fw-semibold">
-          💬 AI Coach
+        <div
+          className="card-header text-center fs-5 fw-semibold d-flex align-items-center justify-content-center gap-2"
+          style={{
+            backgroundColor: "#1f2937",
+            color: "#fbbf24",
+            boxShadow: "inset 0 -2px 4px rgba(251, 191, 36, 0.4)",
+          }}
+        >
+          <i className="fas fa-robot"></i> AI Coach
         </div>
+
         {loading ? (
           <div className="">
             <div className="progress">
