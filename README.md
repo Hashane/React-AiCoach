@@ -66,4 +66,37 @@ REACT_APP_API_BASE_URL=http://localhost:8000
 
 ```bash
 npm start
+# or
+npm run dev
+```
+
+## 🔐 Authentication
+
+This client uses JWT authentication with access & refresh tokens. Protected routes are wrapped with <PrivateRoute /> and user session is handled via a global AuthContext.
+
+🔁 Auto Token Refresh
+Access tokens expire after a short duration. To avoid forcing users to log in repeatedly, the app uses an Axios interceptor to automatically refresh the token when a 401 (unauthorized) error is detected.
+
+## 📁 Project Structure
+
+```bash
+src/
+├── components/
+│   ├── Chat.tsx
+│   ├── ChatWindow.tsx
+│   ├── ConversationItem.tsx
+│   ├── Login.tsx
+│   ├── MessageBubble.tsx
+│   ├── NewChat.tsx
+│   ├── Sidebar.tsx
+│   ├── SoeechInput.tsx
+│   └── Login.tsx
+├── context/
+│   └── AuthContext.tsx
+├── routes/
+│   └── PrivateRoute.tsx
+├── services/
+│   └── axios.ts
+├── app.css
+└── App.tsx
 ```
