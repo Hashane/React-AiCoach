@@ -7,6 +7,8 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [error, SetError] = useState(false);
+  const [errorMessage, SetErrorMessage] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +28,8 @@ function Login() {
       navigate("/");
     } catch (err) {
       console.error("Login failed", err);
-      alert("Invalid credentials. Please try again.");
+      SetError(true);
+      SetErrorMessage("Invalid credentials. Please try again.");
     }
   };
 
@@ -85,6 +88,19 @@ function Login() {
         >
           Login
         </button>
+        {error && errorMessage && (
+          <div
+            className="text-center mt-3 px-3 py-2 rounded"
+            style={{
+              backgroundColor: "#b91c1c",
+              color: "#fff",
+              fontWeight: 500,
+              fontSize: "0.95rem",
+            }}
+          >
+            {errorMessage}
+          </div>
+        )}
       </form>
     </div>
   );
