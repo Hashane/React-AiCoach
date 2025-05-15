@@ -66,11 +66,16 @@ REACT_APP_API_BASE_URL=http://localhost:8000
 
 ```bash
 npm start
+# or
+npm run dev
 ```
 
 ## 🔐 Authentication
 
-This client uses JWT authentication with refresh tokens stored in cookies. Protected routes are wrapped with <PrivateRoute /> and user session is handled via a global AuthContext.
+This client uses JWT authentication with access & refresh tokens. Protected routes are wrapped with <PrivateRoute /> and user session is handled via a global AuthContext.
+
+🔁 Auto Token Refresh
+Access tokens expire after a short duration. To avoid forcing users to log in repeatedly, the app uses an Axios interceptor to automatically refresh the token when a 401 (unauthorized) error is detected.
 
 ## 📁 Project Structure
 
