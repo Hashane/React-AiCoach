@@ -64,8 +64,6 @@ REACT_APP_API_BASE_URL=http://localhost:8000
 ### 4. Run the development server
 
 ```bash
-npm start
-# or
 npm run dev
 ```
 
