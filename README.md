@@ -6,13 +6,12 @@ This is the frontend for **AI Coach**, an intelligent personal training chatbot 
 
 ## 🚀 Features
 
-- ⚛️ Built with React + TypeScript
-- 🔒 JWT-based authentication with protected routes
-- 💬 Chat interface with styled message bubbles
-- 🎤 Voice input using Speech Recognition API
-- 💾 Persistent conversation handling
-- 🌙 Dark theme with a clean, professional UI
-- 📱 Responsive layout with Bootstrap
+- JWT-based authentication with protected routes
+- Chat interface with styled message bubbles
+- Voice input 🎤 using Speech Recognition API
+- Persistent conversation handling
+- Dark theme with a clean, professional UI
+- Responsive layout with Bootstrap
 
 ---
 
@@ -26,7 +25,7 @@ This is the frontend for **AI Coach**, an intelligent personal training chatbot 
 
 ## 📦 Tech Stack
 
-- **React** with **TypeScript**
+- **React** ⚛️ with **TypeScript**
 - **Bootstrap 5** for layout and styles
 - **Axios** for HTTP requests
 - **React Router** for navigation
