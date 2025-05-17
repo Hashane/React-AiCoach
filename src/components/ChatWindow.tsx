@@ -47,10 +47,7 @@ function ChatWindow({ messages, userInput, onChange, onSend }: Props) {
         <button onClick={onSend} className="btn btn-outline-light">
           Send
         </button>
-        <SpeechInput
-          onTranscriptChange={(text) => setSpeechText(text)}
-          autoStart={false}
-        />
+        <SpeechInput onTranscriptChange={(text) => setSpeechText(text)} />
       </div>
     </>
   );
